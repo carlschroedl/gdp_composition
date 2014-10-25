@@ -52,3 +52,10 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#virtualenv
+env/
+.pip/
+.project
+.pydevproject
+
