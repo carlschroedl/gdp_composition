@@ -39,11 +39,15 @@ var filteredPieData = [];
 
 //D3 helper function to populate pie slice parameters from array data
 var donut = d3.layout.pie().value(function(d){
-  return d.octetTotalCount;
+  return d.total;
 });
 
 //D3 helper function to create colors from an ordinal scale
 var color = d3.scale.category20();
+var percentFormatter = function(d){
+        var percentage = d.value;
+        return percentage + "%";
+    };
 
 //D3 helper function to draw arcs, populates parameter "d" in path object
 var arc = d3.svg.arc()
@@ -62,8 +66,8 @@ var streakerDataAdded;
 
 function fillArray() {
   return {
-    port: "port",
-    octetTotalCount: Math.ceil(Math.random()*(arrayRange))
+    category: "category",
+    total: Math.ceil(Math.random()*(arrayRange))
   };
 }
 
@@ -144,8 +148,8 @@ function update() {
   var totalOctets = 0;
   filteredPieData = pieData.filter(filterData);
   function filterData(element, index, array) {
-    element.name = streakerDataAdded[index].port;
-    element.value = streakerDataAdded[index].octetTotalCount;
+    element.name = streakerDataAdded[index].category;
+    element.value = streakerDataAdded[index].total;
     totalOctets += element.value;
     return (element.value > 0);
   }
@@ -214,10 +218,7 @@ function update() {
           return "end";
         }
       })
-      .text(function(d){
-        var percentage = (d.value/totalOctets)*100;
-        return percentage.toFixed(1) + "%";
-      });
+      .text(percentFormatter);
 
     valueLabels.enter().append("svg:text")
       .attr("class", "value")
@@ -237,10 +238,7 @@ function update() {
         } else {
           return "end";
         }
-      }).text(function(d){
-        var percentage = (d.value/totalOctets)*100;
-        return percentage.toFixed(1) + "%";
-      });
+      }).text(percentFormatter);
 
     valueLabels.transition().duration(tweenDuration).attrTween("transform", textTween);
 
