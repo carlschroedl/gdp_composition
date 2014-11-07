@@ -1,5 +1,3 @@
-$(document).ready(function(){
-
 /*
 The MIT License (MIT)
 
@@ -23,6 +21,21 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+$(document).ready(function(){
+d3.csv('data.csv', function(row){
+	Object.keys(row).forEach(function(key){
+		//if column key is numeric
+		if(!isNaN(parseFloat(key))){
+			row[key] = parseFloat(row[key]);
+		}
+	});
+	return row;
+},
+function(error, rows){
+
+
+
+
 
 var w = 450;
 var h = 300;
@@ -55,21 +68,6 @@ var arc = d3.svg.arc()
   .endAngle(function(d){ return d.endAngle; })
   .innerRadius(ir)
   .outerRadius(r);
-
-///////////////////////////////////////////////////////////
-// GENERATE FAKE DATA /////////////////////////////////////
-///////////////////////////////////////////////////////////
-
-var arrayRange = 100000; //range of potential values for each item
-var arraySize;
-var streakerDataAdded;
-
-function fillArray() {
-  return {
-    category: "category",
-    total: Math.ceil(Math.random()*(arrayRange))
-  };
-}
 
 ///////////////////////////////////////////////////////////
 // CREATE VIS & GROUPS ////////////////////////////////////
@@ -138,9 +136,6 @@ var updateInterval = window.setInterval(update, 1500);
 
 // to run each time data is generated
 function update() {
-
-  arraySize = Math.ceil(Math.random()*10);
-  streakerDataAdded = d3.range(arraySize).map(fillArray);
 
   oldPieData = filteredPieData;
   pieData = donut(streakerDataAdded);
@@ -349,4 +344,5 @@ function textTween(d, i) {
     return "translate(" + Math.cos(val) * (r+textOffset) + "," + Math.sin(val) * (r+textOffset) + ")";
   };
 }
+});
 });
