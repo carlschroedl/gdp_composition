@@ -22,19 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 $(document).ready(function(){
-d3.csv('data.csv', function(row){
-	Object.keys(row).forEach(function(key){
-		//if column key is numeric
-		if(!isNaN(parseFloat(key))){
-			row[key] = parseFloat(row[key]);
-		}
-	});
-	return row;
-},
-function(error, rows){
+$.ajax({url: 'data.csv', success: function(data){
+var parsedData = d3.csv.parse(data);
 
-
-
+  //	function(row){
+  //	Object.keys(row).forEach(function(key){
+  //		//if column key is numeric
+  //		if(!isNaN(parseFloat(key))){
+  //			row[key] = parseFloat(row[key]);
+  //		}
+  //	});
 
 
 var w = 450;
@@ -344,5 +341,5 @@ function textTween(d, i) {
     return "translate(" + Math.cos(val) * (r+textOffset) + "," + Math.sin(val) * (r+textOffset) + ")";
   };
 }
-});
+}});
 });
