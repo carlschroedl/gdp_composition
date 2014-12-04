@@ -23,16 +23,19 @@ THE SOFTWARE.
 */
 $(document).ready(function(){
 $.ajax({url: 'data.csv', success: function(data){
-var parsedData = d3.csv.parse(data);
-
-  //	function(row){
-  //	Object.keys(row).forEach(function(key){
-  //		//if column key is numeric
-  //		if(!isNaN(parseFloat(key))){
-  //			row[key] = parseFloat(row[key]);
-  //		}
-  //	});
-
+var rows = data.split('\n');
+var years = rows[0].split(',').splice(1);
+var getIndustryTitle = function(row){
+	var indexOfFirstNumber = row.search(/\d/);
+	var industryTitle = row.substr(0, indexOfFirstNumber).replace(/"/g, '');
+	
+	return industryTitle;
+};
+var nonYearRows = rows.splice(1);
+var industryTitles = $.map(nonYearRows, getIndustryTitle);
+console.log(years);
+console.log(industryTitles);
+debugger;
 
 var w = 450;
 var h = 300;
