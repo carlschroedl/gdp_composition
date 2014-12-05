@@ -23,18 +23,37 @@ THE SOFTWARE.
 */
 $(document).ready(function(){
 $.ajax({url: 'data.csv', success: function(data){
-var rows = data.split('\n');
-var years = rows[0].split(',').splice(1);
+var LINE_DELIM = '\n';
+var rows = data.split(LINE_DELIM);
+var TOKEN_DELIM = ',';
+var years = rows[0].split(TOKEN_DELIM).splice(1);
 var getIndustryTitle = function(row){
 	var indexOfFirstNumber = row.search(/\d/);
-	var industryTitle = row.substr(0, indexOfFirstNumber).replace(/"/g, '');
-	
+	var industryTitle = row.substr(0, indexOfFirstNumber).replace(/("|,$)/g, '');
+		
 	return industryTitle;
 };
+var getIndustryValues = function(row){
+	var indexOfFirstNumber = row.search(/\d/);
+	var industryValuesText = row.substr(indexOfFirstNumber, row.length - indexOfFirstNumber);
+	var industryValues = industryValuesText.split(TOKEN_DELIM);
+	return industryValues;
+};
+var makeDatum = function(row){
+	var industryTitle = getIndustryTitle(row);
+	var valuesForIndustry = getIndustryValues(row);
+	var timeStepValuePairs = valuesForIndustry.map(function(value, index){
+		var year = years[index];
+		return [year, value];
+	});
+	return {
+		key: industryTitle,
+		values: timeStepValuePairs	
+	};
+};
 var nonYearRows = rows.splice(1);
-var industryTitles = $.map(nonYearRows, getIndustryTitle);
-console.log(years);
-console.log(industryTitles);
+var parsedData = $.map(nonYearRows, makeDatum);
+console.dir(parsedData);
 debugger;
 
 var w = 450;
@@ -52,7 +71,7 @@ var filteredPieData = [];
 
 //D3 helper function to populate pie slice parameters from array data
 var donut = d3.layout.pie().value(function(d){
-  return d.total;
+  return d;
 });
 
 //D3 helper function to create colors from an ordinal scale
