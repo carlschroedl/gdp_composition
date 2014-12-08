@@ -76,8 +76,9 @@ var donut = d3.layout.pie().value(function(d){
 //D3 helper function to create colors from an ordinal scale
 var color = d3.scale.category20();
 var percentFormatter = function(d){
+	var key = d.data.key;
         var percentage = d.value;
-        return percentage + "%";
+        return key + ' ' + percentage + "%";
     };
 
 //D3 helper function to draw arcs, populates parameter "d" in path object
