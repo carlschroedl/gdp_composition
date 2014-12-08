@@ -54,7 +54,6 @@ var makeDatum = function(row){
 var nonYearRows = rows.splice(1);
 var parsedData = $.map(nonYearRows, makeDatum);
 console.dir(parsedData);
-debugger;
 
 var w = 450;
 var h = 300;
@@ -71,7 +70,7 @@ var filteredPieData = [];
 
 //D3 helper function to populate pie slice parameters from array data
 var donut = d3.layout.pie().value(function(d){
-  return d;
+  return d.value[1];
 });
 
 //D3 helper function to create colors from an ordinal scale
@@ -150,23 +149,28 @@ var totalUnits = center_group.append("svg:text")
 ///////////////////////////////////////////////////////////
 // STREAKER CONNECTION ////////////////////////////////////
 ///////////////////////////////////////////////////////////
-
+var counter = 0;
+var limit = parsedData.first().values.length;
 var updateInterval = window.setInterval(update, 1500);
-
+var valueIsDefined = function(datum){
+	return datum.value !== undefined;
+  };
 // to run each time data is generated
 function update() {
 
+  counter += 1;
+  counter = counter % limit;
+  streakerDataAdded = parsedData.map(function(datum){
+	return {
+		key: datum.key,
+		value: datum.values[counter]
+	};
+}).filter(valueIsDefined);
   oldPieData = filteredPieData;
   pieData = donut(streakerDataAdded);
 
-  var totalOctets = 0;
-  filteredPieData = pieData.filter(filterData);
-  function filterData(element, index, array) {
-    element.name = streakerDataAdded[index].category;
-    element.value = streakerDataAdded[index].total;
-    totalOctets += element.value;
-    return (element.value > 0);
-  }
+	//remove filtering for now`
+  filteredPieData = pieData.filter(valueIsDefined);
 
   if(filteredPieData.length > 0 && oldPieData.length > 0){
 
@@ -174,8 +178,7 @@ function update() {
     arc_group.selectAll("circle").remove();
 
     totalValue.text(function(){
-      var kb = totalOctets/1024;
-      return kb.toFixed(1);
+      return 100;
       //return bchart.label.abbreviated(totalOctets*8);
     });
 
