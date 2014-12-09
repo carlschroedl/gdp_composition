@@ -66,11 +66,20 @@ var lines, valueLabels, nameLabels;
 var pieData = [];    
 var oldPieData = [];
 var filteredPieData = [];
+var alphaSorting = function(a, b){
+	return d3.ascending(a.key, b.key);
+};
 
+var valueSorting = function(a, b){
+	if (a.value[1] >  b.value[1]){
+		return 1;
+	}
+	return -1;
+};
 //D3 helper function to populate pie slice parameters from array data
 var donut = d3.layout.pie().value(function(d){
   return d.value[1];
-}).sort(null);
+}).sort(alphaSorting);
 
 //D3 helper function to create colors from an ordinal scale
 var color = d3.scale.category20();
