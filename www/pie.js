@@ -53,7 +53,6 @@ var makeDatum = function(row){
 };
 var nonYearRows = rows.splice(1);
 var parsedData = $.map(nonYearRows, makeDatum);
-console.dir(parsedData);
 
 var w = 450;
 var h = 300;
@@ -71,7 +70,7 @@ var filteredPieData = [];
 //D3 helper function to populate pie slice parameters from array data
 var donut = d3.layout.pie().value(function(d){
   return d.value[1];
-});
+}).sort(null);
 
 //D3 helper function to create colors from an ordinal scale
 var color = d3.scale.category20();
@@ -133,7 +132,7 @@ var totalLabel = center_group.append("svg:text")
   .text("TOTAL");
 
 //TOTAL TRAFFIC VALUE
-var totalValue = center_group.append("svg:text")
+var yearLabel= center_group.append("svg:text")
   .attr("class", "total")
   .attr("dy", 7)
   .attr("text-anchor", "middle") // text-align: right
@@ -144,14 +143,15 @@ var totalUnits = center_group.append("svg:text")
   .attr("class", "units")
   .attr("dy", 21)
   .attr("text-anchor", "middle") // text-align: right
-  .text("kb");
+  .text("(year)");
 
 
 ///////////////////////////////////////////////////////////
 // STREAKER CONNECTION ////////////////////////////////////
 ///////////////////////////////////////////////////////////
-var counter = 0;
+var counter = -1;
 var limit = parsedData.first().values.length;
+var currentYear;
 var updateInterval = window.setInterval(update, 1500);
 var valueIsDefined = function(datum){
 	return datum.value !== undefined;
@@ -161,6 +161,7 @@ function update() {
 
   counter += 1;
   counter = counter % limit;
+  currentYear = years[counter];
   streakerDataAdded = parsedData.map(function(datum){
 	return {
 		key: datum.key,
@@ -178,9 +179,8 @@ function update() {
     //REMOVE PLACEHOLDER CIRCLE
     arc_group.selectAll("circle").remove();
 
-    totalValue.text(function(){
-      return 100;
-      //return bchart.label.abbreviated(totalOctets*8);
+    yearLabel.text(function(){
+      return currentYear;
     });
 
     //DRAW ARC PATHS
