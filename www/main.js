@@ -59,7 +59,7 @@ function addPieChart(data){
 var LINE_DELIM = '\n';
 var rows = data.split(LINE_DELIM);
 var TOKEN_DELIM = ',';
-var years = rows[0].split(TOKEN_DELIM).splice(1);
+var years = rows[0].split(TOKEN_DELIM).from(1);
 var getIndustryTitle = function(row){
 	var indexOfFirstNumber = row.search(/\d/);
 	var industryTitle = row.substr(0, indexOfFirstNumber).replace(/("|,$)/g, '');
@@ -84,7 +84,7 @@ var makeDatum = function(row){
 		values: timeStepValuePairs	
 	};
 };
-var nonYearRows = rows.splice(1);
+var nonYearRows = rows.from(1);
 var parsedData = $.map(nonYearRows, makeDatum);
 
 var w = 450;
