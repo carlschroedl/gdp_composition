@@ -1,3 +1,5 @@
+(function(){
+
 /*
 The MIT License (MIT)
 
@@ -21,8 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-$(document).ready(function(){
-$.ajax({url: 'data.csv', success: function(data){
+function addPieChart(data){
 var LINE_DELIM = '\n';
 var rows = data.split(LINE_DELIM);
 var TOKEN_DELIM = ',';
@@ -376,5 +377,12 @@ function textTween(d, i) {
     return "translate(" + Math.cos(val) * (r+textOffset) + "," + Math.sin(val) * (r+textOffset) + ")";
   };
 }
+}
+
+$(document).ready(function(){
+$.ajax({url: 'data.csv', success: function(data){
+	addPieChart(data);
 }});
 });
+
+}());
