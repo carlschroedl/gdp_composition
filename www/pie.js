@@ -79,7 +79,7 @@ var valueSorting = function(a, b){
 //D3 helper function to populate pie slice parameters from array data
 var donut = d3.layout.pie().value(function(d){
   return d.value[1];
-}).sort(alphaSorting);
+}).sort(null);
 
 //D3 helper function to create colors from an ordinal scale
 var color = d3.scale.category20();
@@ -138,7 +138,7 @@ var totalLabel = center_group.append("svg:text")
   .attr("class", "label")
   .attr("dy", -15)
   .attr("text-anchor", "middle") // text-align: right
-  .text("TOTAL");
+  .text("YEAR");
 
 //TOTAL TRAFFIC VALUE
 var yearLabel= center_group.append("svg:text")
@@ -152,7 +152,7 @@ var totalUnits = center_group.append("svg:text")
   .attr("class", "units")
   .attr("dy", 21)
   .attr("text-anchor", "middle") // text-align: right
-  .text("(year)");
+  .text("C.E.");
 
 
 ///////////////////////////////////////////////////////////
