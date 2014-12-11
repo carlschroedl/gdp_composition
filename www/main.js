@@ -414,6 +414,7 @@ function textTween(d, i) {
 $(document).ready(function(){
 $.ajax({url: 'data.csv', success: function(data){
 	addPieChart(data);
+	addStackedAreaChart(data);
 }});
 });
 
