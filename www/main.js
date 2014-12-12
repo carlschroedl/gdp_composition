@@ -54,12 +54,16 @@ nv.addGraph(function() {
     return chart;
   });
 };
-
-function addPieChart(data){
 var LINE_DELIM = '\n';
-var rows = data.split(LINE_DELIM);
 var TOKEN_DELIM = ',';
-var years = rows[0].split(TOKEN_DELIM).from(1);
+function getYearsFromCsv(csv){
+	var rows = csv.split(LINE_DELIM);
+	var years = rows[0].split(TOKEN_DELIM).from(1);
+	return years;
+};
+function parseCsv(csv){
+var years = getYearsFromCsv(csv);
+var rows = csv.split(LINE_DELIM);
 var getIndustryTitle = function(row){
 	var indexOfFirstNumber = row.search(/\d/);
 	var industryTitle = row.substr(0, indexOfFirstNumber).replace(/("|,$)/g, '');
@@ -87,6 +91,10 @@ var makeDatum = function(row){
 var nonYearRows = rows.from(1);
 var parsedData = $.map(nonYearRows, makeDatum);
 
+return parsedData;
+};
+
+function addPieChart(parsedData, years){
 var w = 450;
 var h = 300;
 var r = 100;
@@ -413,8 +421,10 @@ function textTween(d, i) {
 
 $(document).ready(function(){
 $.ajax({url: 'data.csv', success: function(data){
-	addPieChart(data);
-	addStackedAreaChart(data);
+	var years = getYearsFromCsv(data);
+	var parsedData = parseCsv(data);
+	addPieChart(parsedData, years);
+	addStackedAreaChart(parsedData);
 }});
 });
 
