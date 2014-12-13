@@ -9,11 +9,23 @@
   <script src="nvd3/nv.d3.js"></script>
   <script src="sugar.min.js"></script>
   <script src="main.js"></script>
+  <style>
+	.inline-block {
+		display: inline-block;
+	}
+ </style>
  </head>
  <body>
+<div>
+	<div class="inline-block" style="width: 40%;vertical-align:top;">
+		<h1>US GDP Compositon</h1>
+	</div>
+	<div class="inline-block" style="width: 40%; text-align:right;">
+ 		<span id="easy-as-pie-chart"></span>  
+	</div>
+</div>
  <div id="stacked-area-chart">
-  <svg style="height:300px; width:100%;"></svg>
+  <svg style="height:600px; width:100%;"></svg>
  </div>
- <div id="easy-as-pie-chart"></div>  
  </body>
 </html>
