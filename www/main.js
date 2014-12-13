@@ -47,11 +47,11 @@ nv.addGraph(function() {
     //Format x-axis labels with custom function.
     chart.xAxis
         .tickFormat(function(d) { 
-          return d3.time.format('%x')(new Date(d)) 
+          return d3.time.format('%Y')(new Date(d)) 
     });
 
     chart.yAxis
-        .tickFormat(d3.format(',.2f'));
+        .tickFormat(d3.format(',.0f'));
 
     d3.select('#stacked-area-chart svg')
       .datum(data)
