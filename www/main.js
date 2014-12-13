@@ -25,6 +25,14 @@ THE SOFTWARE.
 */
 
 function addStackedAreaChart(data){
+data = data.map(function(datum){
+	datum.values = datum.values.map(function(datum){
+		datum[0] = yearToTimestamp(datum[0]);
+		datum[1] = stringToNumber(datum[1]);
+		return datum;
+	});
+	return datum;
+});
 nv.addGraph(function() {
     var chart = nv.models.stackedAreaChart()
                   .margin({right: 100})
@@ -45,7 +53,7 @@ nv.addGraph(function() {
     chart.yAxis
         .tickFormat(d3.format(',.2f'));
 
-    d3.select('#addStackedAreaChart svg')
+    d3.select('#stacked-area-chart svg')
       .datum(data)
       .call(chart);
 
@@ -53,6 +61,18 @@ nv.addGraph(function() {
 
     return chart;
   });
+};
+function valueIsDefined(datum){
+	return datum.value !== undefined;
+};
+function keyIsDefined(datum){
+	return datum.key !== undefined && datum.key.length;
+};
+function yearToTimestamp(year){
+	return Date.create(year).getTime();
+};
+function stringToNumber(string){
+	return +string;
 };
 var LINE_DELIM = '\n';
 var TOKEN_DELIM = ',';
@@ -89,8 +109,8 @@ var makeDatum = function(row){
 	};
 };
 var nonYearRows = rows.from(1);
-var parsedData = $.map(nonYearRows, makeDatum);
-
+var parsedData = nonYearRows.map(makeDatum);
+parsedData = parsedData.filter(keyIsDefined);
 return parsedData;
 };
 
@@ -203,9 +223,6 @@ var counter = -1;
 var limit = parsedData.first().values.length;
 var currentYear;
 var updateInterval = window.setInterval(update, 1500);
-var valueIsDefined = function(datum){
-	return datum.value !== undefined;
-  };
 // to run each time data is generated
 function update() {
 
