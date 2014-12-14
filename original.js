@@ -1,5 +1,3 @@
-(function(){
-
 /*
 The MIT License (MIT)
 
@@ -24,97 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-function addStackedAreaChart(data){
-data = data.map(function(datum){
-	datum.values = datum.values.map(function(datum){
-		datum[0] = yearToTimestamp(datum[0]);
-		datum[1] = stringToNumber(datum[1]);
-		return datum;
-	});
-	return datum;
-});
-nv.addGraph(function() {
-    var chart = nv.models.stackedAreaChart()
-                  .margin({right: 100})
-                  .x(function(d) { return d[0] })   //We can modify the data accessor functions...
-                  .y(function(d) { return d[1] })   //...in case your data is formatted differently.
-                  .useInteractiveGuideline(true)    //Tooltips which show all data points. Very nice!
-                  .rightAlignYAxis(true)      //Let's move the y-axis to the right side.
-                  .transitionDuration(500)
-                  .showControls(true)       //Allow user to choose 'Stacked', 'Stream', 'Expanded' mode.
-                  .clipEdge(true);
-
-    //Format x-axis labels with custom function.
-    chart.xAxis
-        .tickFormat(function(d) { 
-          return d3.time.format('%Y')(new Date(d)) 
-    });
-
-    chart.yAxis
-        .tickFormat(d3.format(',.0f'));
-
-    d3.select('#stacked-area-chart svg')
-      .datum(data)
-      .call(chart);
-
-    nv.utils.windowResize(chart.update);
-
-    return chart;
-  });
-};
-function valueIsDefined(datum){
-	return datum.value !== undefined;
-};
-function keyIsDefined(datum){
-	return datum.key !== undefined && datum.key.length;
-};
-function yearToTimestamp(year){
-	return Date.create(year).getTime();
-};
-function stringToNumber(string){
-	return +string;
-};
-var LINE_DELIM = '\n';
-var TOKEN_DELIM = ',';
-function getYearsFromCsv(csv){
-	var rows = csv.split(LINE_DELIM);
-	var years = rows[0].split(TOKEN_DELIM).from(1);
-	return years;
-};
-function parseCsv(csv){
-var years = getYearsFromCsv(csv);
-var rows = csv.split(LINE_DELIM);
-var getIndustryTitle = function(row){
-	var indexOfFirstNumber = row.search(/\d/);
-	var industryTitle = row.substr(0, indexOfFirstNumber).replace(/("|,$)/g, '');
-		
-	return industryTitle;
-};
-var getIndustryValues = function(row){
-	var indexOfFirstNumber = row.search(/\d/);
-	var industryValuesText = row.substr(indexOfFirstNumber, row.length - indexOfFirstNumber);
-	var industryValues = industryValuesText.split(TOKEN_DELIM);
-	return industryValues;
-};
-var makeDatum = function(row){
-	var industryTitle = getIndustryTitle(row);
-	var valuesForIndustry = getIndustryValues(row);
-	var timeStepValuePairs = valuesForIndustry.map(function(value, index){
-		var year = years[index];
-		return [year, value];
-	});
-	return {
-		key: industryTitle,
-		values: timeStepValuePairs	
-	};
-};
-var nonYearRows = rows.from(1);
-var parsedData = nonYearRows.map(makeDatum);
-parsedData = parsedData.filter(keyIsDefined);
-return parsedData;
-};
-
-function addPieChart(parsedData, years){
 var w = 450;
 var h = 300;
 var r = 100;
@@ -127,28 +34,14 @@ var lines, valueLabels, nameLabels;
 var pieData = [];    
 var oldPieData = [];
 var filteredPieData = [];
-var alphaSorting = function(a, b){
-	return d3.ascending(a.key, b.key);
-};
 
-var valueSorting = function(a, b){
-	if (a.value[1] >  b.value[1]){
-		return 1;
-	}
-	return -1;
-};
 //D3 helper function to populate pie slice parameters from array data
 var donut = d3.layout.pie().value(function(d){
-  return d.value[1];
-}).sort(null);
+  return d.octetTotalCount;
+});
 
 //D3 helper function to create colors from an ordinal scale
 var color = d3.scale.category20();
-var percentFormatter = function(d){
-	var key = d.data.key;
-        var percentage = d.value;
-        return key + ' ' + percentage + "%";
-    };
 
 //D3 helper function to draw arcs, populates parameter "d" in path object
 var arc = d3.svg.arc()
@@ -156,6 +49,21 @@ var arc = d3.svg.arc()
   .endAngle(function(d){ return d.endAngle; })
   .innerRadius(ir)
   .outerRadius(r);
+
+///////////////////////////////////////////////////////////
+// GENERATE FAKE DATA /////////////////////////////////////
+///////////////////////////////////////////////////////////
+
+var arrayRange = 100000; //range of potential values for each item
+var arraySize;
+var streakerDataAdded;
+
+function fillArray() {
+  return {
+    port: "port",
+    octetTotalCount: Math.ceil(Math.random()*(arrayRange))
+  };
+}
 
 ///////////////////////////////////////////////////////////
 // CREATE VIS & GROUPS ////////////////////////////////////
@@ -199,10 +107,10 @@ var totalLabel = center_group.append("svg:text")
   .attr("class", "label")
   .attr("dy", -15)
   .attr("text-anchor", "middle") // text-align: right
-  .text("YEAR");
+  .text("TOTAL");
 
 //TOTAL TRAFFIC VALUE
-var yearLabel= center_group.append("svg:text")
+var totalValue = center_group.append("svg:text")
   .attr("class", "total")
   .attr("dy", 7)
   .attr("text-anchor", "middle") // text-align: right
@@ -213,41 +121,42 @@ var totalUnits = center_group.append("svg:text")
   .attr("class", "units")
   .attr("dy", 21)
   .attr("text-anchor", "middle") // text-align: right
-  .text("C.E.");
+  .text("kb");
 
 
 ///////////////////////////////////////////////////////////
 // STREAKER CONNECTION ////////////////////////////////////
 ///////////////////////////////////////////////////////////
-var counter = -1;
-var limit = parsedData.first().values.length;
-var currentYear;
+
 var updateInterval = window.setInterval(update, 1500);
+
 // to run each time data is generated
 function update() {
 
-  counter += 1;
-  counter = counter % limit;
-  currentYear = years[counter];
-  streakerDataAdded = parsedData.map(function(datum){
-	return {
-		key: datum.key,
-		value: datum.values[counter]
-	};
-}).filter(valueIsDefined);
+  arraySize = Math.ceil(Math.random()*10);
+  streakerDataAdded = d3.range(arraySize).map(fillArray);
+
   oldPieData = filteredPieData;
   pieData = donut(streakerDataAdded);
 
-	//remove filtering for now`
-  filteredPieData = pieData.filter(valueIsDefined);
+  var totalOctets = 0;
+  filteredPieData = pieData.filter(filterData);
+  function filterData(element, index, array) {
+    element.name = streakerDataAdded[index].port;
+    element.value = streakerDataAdded[index].octetTotalCount;
+    totalOctets += element.value;
+    return (element.value > 0);
+  }
 
   if(filteredPieData.length > 0 && oldPieData.length > 0){
 
     //REMOVE PLACEHOLDER CIRCLE
     arc_group.selectAll("circle").remove();
 
-    yearLabel.text(function(){
-      return currentYear;
+    totalValue.text(function(){
+      var kb = totalOctets/1024;
+      return kb.toFixed(1);
+      //return bchart.label.abbreviated(totalOctets*8);
     });
 
     //DRAW ARC PATHS
@@ -303,7 +212,10 @@ function update() {
           return "end";
         }
       })
-      .text(percentFormatter);
+      .text(function(d){
+        var percentage = (d.value/totalOctets)*100;
+        return percentage.toFixed(1) + "%";
+      });
 
     valueLabels.enter().append("svg:text")
       .attr("class", "value")
@@ -323,7 +235,10 @@ function update() {
         } else {
           return "end";
         }
-      }).text(percentFormatter);
+      }).text(function(d){
+        var percentage = (d.value/totalOctets)*100;
+        return percentage.toFixed(1) + "%";
+      });
 
     valueLabels.transition().duration(tweenDuration).attrTween("transform", textTween);
 
@@ -434,15 +349,3 @@ function textTween(d, i) {
     return "translate(" + Math.cos(val) * (r+textOffset) + "," + Math.sin(val) * (r+textOffset) + ")";
   };
 }
-}
-
-$(document).ready(function(){
-$.ajax({url: 'data.csv', success: function(data){
-	var years = getYearsFromCsv(data);
-	var parsedData = parseCsv(data);
-	addPieChart(parsedData, years);
-	addStackedAreaChart(parsedData);
-}});
-});
-
-}());
