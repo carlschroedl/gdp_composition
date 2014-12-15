@@ -38,7 +38,8 @@ nv.addGraph(function() {
                   .margin({right: 100})
                   .x(function(d) { return d[0] })   //We can modify the data accessor functions...
                   .y(function(d) { return d[1] })   //...in case your data is formatted differently.
-                  .useInteractiveGuideline(true)    //Tooltips which show all data points. Very nice!
+                  /*.useInteractiveGuideline(true)    //Tooltips which show all data points. Very nice!*/
+		.tooltip(function(key, y, e, graph) { return 'Some String' })
                   .rightAlignYAxis(true)      //Let's move the y-axis to the right side.
                   .transitionDuration(500)
                   .showControls(true)       //Allow user to choose 'Stacked', 'Stream', 'Expanded' mode.
