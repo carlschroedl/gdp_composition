@@ -16,36 +16,32 @@
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="sugar.min.js"></script>
     <script src="main.js"></script>
-    <style>
-	body {
-		font-family: Arial;
-	}
-	.inline-block {
-		display: inline-block;
-	}
- </style>
   </head>
   <body>
-    <div class="container-fluid">
+    <div class="container">
       <h1 style="text-align:center;">US GDP Composition Over Time</h1>
       <div class="row">
-        <div>
-          <div class="inline-block" style="width: 40%; margin-right: 5%;vertical-align:top;">
+        <div class="row">
+          <div class="col-xs-12 col-md-6" style="vertical-align:top;">
             <p>Although the gross domestic product is an <a href="http://en.wikipedia.org/wiki/Gross_domestic_product#Limitations_and_criticisms">incomplete and somewhat controversial</a> means of gaging economic health, the ubiquity and ease of access to GDP data facilitates easy visualization and analysis.</p>
             <p>
 		The data for this visualization was sourced from the <a href="http://www.bea.gov/industry/gdpbyind_data.htm">US Bureau of Economic Analysis</a>.
 		</p>
           </div>
-          <div class="inline-block" style="width: 45%; text-align:right;">
-            <div id="easy-as-pie-chart" style="margin-left:auto"/>
+          <div class="col-xs-12 col-md-6">
+            <div class="center" id="easy-as-pie-chart"/>
           </div>
         </div>
-        <div id="stacked-area-chart">
-          <svg style="height:600px; width:100%;"/>
-        </div>
-        <h3 style="text-align: center;"><a href="https://github.com/carlschroedl/gdp_composition">Fork this project on GitHub</a>.
+	<div class="row">
+        	<div class="col-xs-12" id="stacked-area-chart">
+         		<svg style="height:600px; width:100%;"/>
+       		</div>
+	</div>
+	<div class="row">
+        	<h3 style="text-align: center;"><a href="https://github.com/carlschroedl/gdp_composition">Fork this project on GitHub</a>.
 </h3>
-      </div>
-    </div>
+	</div>
+      </div><!-- outermost row -->
+    </div><!-- container -->
   </body>
 </html>
