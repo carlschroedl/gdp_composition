@@ -1,16 +1,22 @@
+<?xml version="1.0"?>
 <!DOCTYPE html>
 <html>
- <head>
-  <meta charset="UTF-8">
-  <title>title</title>
-  <link rel="stylesheet" type="text/css" href="pie.css"/>
-  <script src="jquery/jquery-2.1.1.js"></script>
-  <script src="d3/d3.js"></script>
-  <script src="nvd3/nv.d3.js"></script>
-  <script src="sugar.min.js"></script>
-  <script src="main.js"></script>
-	<link type="text/css" rel="stylesheet" href="nvd3/nv.d3.css"/>
-  <style>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>US GDP Composition Over Time</title>
+    <link rel="stylesheet" type="text/css" href="pie.css"/>
+    <link type="text/css" rel="stylesheet" href="nvd3/nv.d3.css"/>
+    <script src="jquery/jquery-2.1.1.js"/>
+    <script src="d3/d3.js"/>
+    <script src="nvd3/nv.d3.js"/>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"/>
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css"/>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="bootstrap/js/bootstrap.min.js"/>
+    <script src="sugar.min.js"/>
+    <script src="main.js"/>
+    <style>
 	body {
 		font-family: Arial;
 	}
@@ -18,28 +24,28 @@
 		display: inline-block;
 	}
  </style>
- </head>
- <body>
-
-<h1 style="text-align:center;">US GDP Composition Over Time</h1>
-<div style="margin-left:5%; margin-right:5%;">
-	<div>
-	<div class="inline-block" style="width: 40%; margin-right: 5%;vertical-align:top;">
-		<p>Although the gross domestic product is an <a href="http://en.wikipedia.org/wiki/Gross_domestic_product#Limitations_and_criticisms">incomplete and somewhat controversial</a> means of gaging economic health, the ubiquity and ease of access to GDP data facilitates easy visualization and analysis.</p>
-		<p>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <h1 style="text-align:center;">US GDP Composition Over Time</h1>
+      <div class="row">
+        <div>
+          <div class="inline-block" style="width: 40%; margin-right: 5%;vertical-align:top;">
+            <p>Although the gross domestic product is an <a href="http://en.wikipedia.org/wiki/Gross_domestic_product#Limitations_and_criticisms">incomplete and somewhat controversial</a> means of gaging economic health, the ubiquity and ease of access to GDP data facilitates easy visualization and analysis.</p>
+            <p>
 		The data for this visualization was sourced from the <a href="http://www.bea.gov/industry/gdpbyind_data.htm">US Bureau of Economic Analysis</a>.
 		</p>
-	</div>
-	<div class="inline-block" style="width: 45%; text-align:right;">
- 		<div id="easy-as-pie-chart" style="margin-left:auto"></div>  
-	</div>
-</div>
- <div id="stacked-area-chart">
-  <svg style="height:600px; width:100%;"></svg>
- </div>
-<h3 style="text-align: center;">
-	<a href="https://github.com/carlschroedl/gdp_composition">Fork this project on GitHub</a>.
+          </div>
+          <div class="inline-block" style="width: 45%; text-align:right;">
+            <div id="easy-as-pie-chart" style="margin-left:auto"/>
+          </div>
+        </div>
+        <div id="stacked-area-chart">
+          <svg style="height:600px; width:100%;"/>
+        </div>
+        <h3 style="text-align: center;"><a href="https://github.com/carlschroedl/gdp_composition">Fork this project on GitHub</a>.
 </h3>
-</div>
- </body>
+      </div>
+    </div>
+  </body>
 </html>
