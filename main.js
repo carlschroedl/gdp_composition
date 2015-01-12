@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-function addStackedAreaChart(data){
+function addStackedAreaChart(data, updatePie){
 data = data.map(function(datum){
 	datum.values = datum.values.map(function(datum){
 		datum[0] = yearToTimestamp(datum[0]);
@@ -34,12 +34,16 @@ data = data.map(function(datum){
 	return datum;
 });
 nv.addGraph(function() {
+	var tooltip = function(key, year, e, graph) { 
+		updatePie(year);
+		return null;
+	};
     var chart = nv.models.stackedAreaChart()
                   .margin({right: 100})
                   .x(function(d) { return d[0] })   //We can modify the data accessor functions...
                   .y(function(d) { return d[1] })   //...in case your data is formatted differently.
-                  .useInteractiveGuideline(true)    //Tooltips which show all data points. Very nice!
-		//.tooltip(function(key, y, e, graph) { return 'Some String' })
+                  //.useInteractiveGuideline(true)    //Tooltips which show all data points. Very nice!
+		  .tooltip(tooltip)
                   .rightAlignYAxis(true)      //Let's move the y-axis to the right side.
                   .transitionDuration(500)
                   .showControls(true)       //Allow user to choose 'Stacked', 'Stream', 'Expanded' mode.
@@ -216,30 +220,17 @@ var totalUnits = center_group.append("svg:text")
   .attr("text-anchor", "middle") // text-align: right
   .text("C.E.");
 
-
-///////////////////////////////////////////////////////////
-// STREAKER CONNECTION ////////////////////////////////////
-///////////////////////////////////////////////////////////
-var counter = -1;
-var limit = parsedData.first().values.length;
-var currentYear;
-var updateInterval = window.setInterval(update, 1500);
-// to run each time data is generated
-function update() {
-
-  counter += 1;
-  counter = counter % limit;
-  currentYear = years[counter];
+function updatePie(currentYear, years) {
+  var yearIndex = years[currentYear];
   streakerDataAdded = parsedData.map(function(datum){
 	return {
 		key: datum.key,
-		value: datum.values[counter]
+		value: datum.values[yearIndex]
 	};
-}).filter(valueIsDefined);
+  }).filter(valueIsDefined);
   oldPieData = filteredPieData;
   pieData = donut(streakerDataAdded);
 
-	//remove filtering for now`
   filteredPieData = pieData.filter(valueIsDefined);
 
   if(filteredPieData.length > 0 && oldPieData.length > 0){
@@ -435,14 +426,15 @@ function textTween(d, i) {
     return "translate(" + Math.cos(val) * (r+textOffset) + "," + Math.sin(val) * (r+textOffset) + ")";
   };
 }
+return function(year){updatePie(year, years);};
 }
 
 $(document).ready(function(){
 $.ajax({url: 'data/GDPbyIndCombination.csv', success: function(data){
 	var years = getYearsFromCsv(data);
 	var parsedData = parseCsv(data);
-	addPieChart(parsedData, years);
-	addStackedAreaChart(parsedData);
+	var updatePie = addPieChart(parsedData, years);
+	addStackedAreaChart(parsedData, updatePie);
 }});
 });
 
