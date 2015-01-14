@@ -48,7 +48,11 @@ nv.addGraph(function() {
                   .transitionDuration(500)
                   .showControls(true)       //Allow user to choose 'Stacked', 'Stream', 'Expanded' mode.
                   .clipEdge(true);
-
+/*	chart.interactiveLayer.dispatch.on('elementMouseover', function(){
+		console.dir(arguments);
+		debugger;
+	});
+*/
     //Format x-axis labels with custom function.
     chart.xAxis
         .tickFormat(function(d) { 
@@ -221,7 +225,7 @@ var totalUnits = center_group.append("svg:text")
   .text("C.E.");
 
 function updatePie(currentYear, years) {
-  var yearIndex = years[currentYear];
+  var yearIndex = years.indexOf(currentYear);
   streakerDataAdded = parsedData.map(function(datum){
 	return {
 		key: datum.key,
